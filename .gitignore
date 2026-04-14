@@ -1,0 +1,26 @@
+# State & Data Warehouse
+warehouse/
+data/raw_hcl/
+data/processed/
+*.duckdb
+*.duckdb.wal
+
+# Ephemeral Variables & Secrets
+.env
+.env.local
+
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+
+# Nix Build Artifacts
+result
+result-*
+.direnv/
+
+# OS Generated Files
+.DS_Store
+Thumbs.db

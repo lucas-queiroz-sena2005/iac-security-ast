@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  ast-pipeline:
+    image: hcl-ast-security-pipeline:latest
+    volumes:
+      - ./warehouse:/app/warehouse
+      - ./src:/app/src
+    environment:
+      - PYTHONPATH=/app/src
+      - DUCKDB_PATH=/app/warehouse/ast_security_matrix.duckdb
+      - SRC_ENDPOINT=https://sourcegraph.com
+      - SRC_ACCESS_TOKEN=${SRC_ACCESS_TOKEN}
+    command: ["transform-load"]
