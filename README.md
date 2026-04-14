@@ -1,12 +1,101 @@
+HCL Topology & Cloud Security Regression Matrix
 
-<div align="center"><h1>HCL Topology & Cloud Security Regression Matrix</h1><p><b>Quantifying "Security Smells" in Infrastructure as Code (IaC) via AST Analysis</b></p><!-- Badges --><a href="https://www.google.com/search?q=https://nixos.org/"><img src="https://www.google.com/search?q=https://img.shields.io/badge/Environment-Nix-5277C3.svg%3Flogo%3Dnixos%26logoColor%3Dwhite" alt="Environment: Nix"></a><a href="https://www.google.com/search?q=https://duckdb.org/"><img src="https://www.google.com/search?q=https://img.shields.io/badge/OLAP-DuckDB-FFF000.svg%3Flogo%3Dduckdb%26logoColor%3Dblack" alt="Database: DuckDB"></a><a href="https://www.google.com/search?q=https://checkov.io/"><img src="https://www.google.com/search?q=https://img.shields.io/badge/SAST-Checkov-20B2AA.svg" alt="SAST: Checkov"></a><a href="#academic-embargo"><img src="https://www.google.com/search?q=https://img.shields.io/badge/Status-Academic_Embargo-red.svg" alt="Status: Academic Embargo"></a></div><details><summary><h2>🇧🇷 Ler a Documentação em Português (Portuguese Option)</h2></summary><hr>⚠️ AVISO DE EMBARGO ACADÊMICO: Este repositório serve como vitrine arquitetural e projeto de infraestrutura para um Trabalho de Graduação (FATEC Campinas) em andamento. Para proteger a propriedade intelectual, a integridade dos dados e evitar plágio metodológico antes da publicação formal, os scripts principais de extração, o Data Warehouse (DuckDB) e os modelos de regressão multivariada são mantidos em um repositório privado.1. Resumo ExecutivoA validação de segurança em nuvem é estruturalmente reativa. Este projeto desloca o DevSecOps para a esquerda (shift-left), tratando o Compliance como um problema rigoroso de Engenharia de Dados (Batch Processing). Extraindo a Árvore de Sintaxe Abstrata (AST) do código Terraform (HCL), o sistema prova matematicamente que decisões arquiteturais sub-ótimas (monólitos, acoplamento profundo, excesso de hardcode) são preditores diretos de falhas em AWS (CIS, PCI-DSS, HIPAA).2. Arquitetura (Pipeline ELT)O sistema adota o paradigma Extract, Load, Transform (ELT), garantido por um ambiente determinístico (Nix) e orquestração via Docker.Fase 1 (Extract): Ingestão de repositórios open-source AWS HCL via GitHub API.Fase 2 (Process): Avaliação simultânea de regras via Checkov (SAST) e extração de métricas de grafos via parser Python customizado com tree-sitter.Fase 3 (Load): Armazenamento em DuckDB para consultas OLAP performáticas.3. Matriz de ConformidadeO modelo mapeia falhas cibernéticas contra vetores topológicos:CIS AWS (IAM/Arquitetura): Correlaciona strings literais e complexidade ciclomática contra falhas de privilégio mínimo e KMS.PCI DSS v4.0 (Redes): Correlaciona blocos dinâmicos e laços de repetição contra fugas de perímetro (ex: 0.0.0.0/0).HIPAA/LGPD (Privacidade): Correlaciona profundidade de módulos contra configurações S3 e ElasticSearch.4. Execução (Artefato OCI)docker load < result
-docker-compose up ast-pipeline
-<hr></details>📋 Table of ContentsAcademic Embargo NoticeExecutive SummarySystem Architecture (ELT Pipeline)Methodological & Statistical RigorGround Truth MatrixRepository StructureExecution Protocol<a id="academic-embargo-notice"></a>[!WARNING]ACADEMIC EMBARGO NOTICE: This repository serves as the architectural showcase and infrastructure blueprint for an ongoing academic thesis (Trabalho de Graduação - FATEC Campinas). To protect intellectual property, data integrity, and prevent methodological scooping prior to formal publication, the core extraction scripts, DuckDB data warehouse, and multivariate regression models are maintained in a secure, private repository. This public repository demonstrates the system architecture, deterministic execution environment, and analytical schema.1. Executive SummaryCloud security validation is structurally reactive ("violation and patch"). The existing paradigm fails to anticipate vulnerabilities introduced by declarative code complexity.This project shifts DevSecOps entirely left by treating Compliance-as-Code as a strict Data Engineering (Batch Processing) problem. By extracting the Abstract Syntax Tree (AST) of Terraform (HCL) configurations, the system proves mathematically that sub-optimal architectural decisions—such as monoliths, deep module coupling, and high hardcoded density—act as direct, quantifiable predictors for compliance failures in AWS infrastructure (CIS, PCI-DSS v4.0, HIPAA).2. System Architecture (ELT Pipeline)The system operates under an Extract, Load, Transform (ELT) paradigm, engineered for deterministic execution and high-throughput analytical querying.┌─────────────────┐      ┌───────────────────────────┐      ┌──────────────────┐      ┌──────────────────┐
+Quantifying "Security Smells" in Infrastructure as Code (IaC) via AST Analysis
+
+<div align="center">
+
+🇧🇷 Leia a Documentação em Português
+
+</div>
+
+📋 Table of Contents
+
+Academic Embargo Notice
+
+Executive Summary
+
+System Architecture (ELT Pipeline)
+
+Methodological & Statistical Rigor
+
+Ground Truth Matrix
+
+Repository Structure
+
+Execution Protocol
+
+⚠️ Academic Embargo Notice
+
+This repository serves as the architectural showcase and infrastructure blueprint for an ongoing academic thesis (Trabalho de Graduação - FATEC Campinas). To protect intellectual property, data integrity, and prevent methodological scooping prior to formal publication, the core extraction scripts, DuckDB data warehouse, and multivariate regression models are maintained in a secure, private repository. This public repository demonstrates the system architecture, deterministic execution environment, and analytical schema.
+
+1. Executive Summary
+
+Cloud security validation is structurally reactive ("violation and patch"). The existing paradigm fails to anticipate vulnerabilities introduced by declarative code complexity.
+
+This project shifts DevSecOps entirely left by treating Compliance-as-Code as a strict Data Engineering (Batch Processing) problem. By extracting the Abstract Syntax Tree (AST) of Terraform (HCL) configurations, the system proves mathematically that sub-optimal architectural decisions—such as monoliths, deep module coupling, and high hardcoded density—act as direct, quantifiable predictors for compliance failures in AWS infrastructure (CIS, PCI-DSS v4.0, HIPAA).
+
+2. System Architecture (ELT Pipeline)
+
+The system operates under an Extract, Load, Transform (ELT) paradigm, engineered for deterministic execution and high-throughput analytical querying.
+
+┌─────────────────┐      ┌───────────────────────────┐      ┌──────────────────┐      ┌──────────────────┐
 │ GitHub / API    │      │ SAST Audit Engine         │      │ Local Data       │      │ Presentation     │
 │ Sourcegraph CLI ├─(1)─►│ HCL AST Python Parser     ├─(2)─►│ Warehouse        ├─(3)─►│ Dashboard SPA    │
 │ (MSR Corpus)    │ Ext  │ (tree-sitter / networkx)  │ Trn  │ (DuckDB Columnar)│ Ld   │ (Node.js/React)  │
 └─────────────────┘      └───────────────────────────┘      └──────────────────┘      └──────────────────┘
-Infrastructure & Determinism: Configured entirely via Nix flakes to guarantee absolute environmental reproducibility across any POSIX system, circumventing "works-on-my-machine" failures. Containerized orchestration via Docker Compose.Phase 1 (Extract): High-throughput ingestion of open-source AWS HCL modules (Mining Software Repositories) enforcing strict maturity controls (stars > 15).Phase 2 (Process): Concurrent batch execution. Checkov evaluates the corpus against 24 orthogonal compliance policies. Simultaneously, a Python parser extracts topological graph metrics (Depth, Cyclomatic Complexity, Coupling) directly from the AST.Phase 3 (Load): Ingestion into DuckDB, optimized for low-latency mathematical aggregations and multivariate regression without network round-trip overhead.3. Methodological & Statistical RigorThe analytical engine is bound by strict empirical software engineering standards to ensure execution viability and mathematical truth.<dl><dt><b>High-Dimensional Matrix</b></dt><dd>Evaluates 48 independent structural variables against 24 dependent security variables, resulting in a minimum of 1,152 orthogonal univariate tests.</dd><dt><b>FDR Control (P-Hacking Mitigation)</b></dt><dd>To mathematically suppress the Type I error (False Positive) inflation inherent to massive matrix testing, the pipeline enforces the <b>Benjamini-Hochberg False Discovery Rate (FDR)</b> procedure at a strict 5% threshold.</dd><dt><b>Causal Isolation</b></dt><dd>Omitted Variable Bias (OVB) is controlled via Directed Acyclic Graphs (DAGs), isolating the pure structural effect of the HCL AST from external developer maturity biases.</dd><dt><b>Null-Resource Handling</b></dt><dd>The system dynamically bypasses non-instantiated AWS resources in the AST, statistically excluding them from conditional probability denominators to prevent False Negative skewing.</dd></dl>4. Ground Truth MatrixThe regression model maps topological code structures to real-world infrastructure vulnerabilities. The matrix below defines the orthogonal mapping strategy:<table><thead><tr><th width="20%">Framework</th><th width="35%">Security Vector (Checkov IDs)</th><th width="45%">Topological Causal Predictors (AST)</th></tr></thead><tbody><tr><td><b>CIS AWS Foundations</b></td><td>Architecture & IAM<i>(e.g., CKV_AWS_1, CKV_AWS_7, CKV_AWS_41)</i></td><td><code>numLiteralExpression</code>, <code>avgMccabeCC</code>, <code>entropyOfStrings</code>, <code>maxDepthNestedBlocks</code></td></tr><tr><td><b>PCI DSS v4.0</b></td><td>Network & Transactional<i>(e.g., CKV_AWS_25, CKV_AWS_260, CKV_AWS_277)</i></td><td><code>numDynamicBlocks</code>, <code>numLoops</code>, <code>countOfBooleanFlags</code>, <code>numConditionalExpressions</code></td></tr><tr><td><b>HIPAA & LGPD</b></td><td>Privacy & Health Data<i>(e.g., CKV_AWS_5, CKV_AWS_16, CKV_AWS_55)</i></td><td><code>moduleNestingDepth</code>, <code>numCrossResourceReferences</code>, <code>avgDepthNestedBlocks</code></td></tr></tbody></table>5. Repository Structure.
+
+
+Infrastructure & Determinism: Configured entirely via Nix flakes to guarantee absolute environmental reproducibility across any POSIX system, circumventing "works-on-my-machine" failures. Containerized orchestration via Docker Compose.
+
+Phase 1 (Extract): High-throughput ingestion of open-source AWS HCL modules (Mining Software Repositories) enforcing strict maturity controls (stars > 15).
+
+Phase 2 (Process): Concurrent batch execution. Checkov evaluates the corpus against 24 orthogonal compliance policies. Simultaneously, a Python parser extracts topological graph metrics (Depth, Cyclomatic Complexity, Coupling) directly from the AST.
+
+Phase 3 (Load): Ingestion into DuckDB, optimized for low-latency mathematical aggregations and multivariate regression without network round-trip overhead.
+
+3. Methodological & Statistical Rigor
+
+The analytical engine is bound by strict empirical software engineering standards:
+
+High-Dimensional Matrix: Evaluates 48 independent structural variables against 24 dependent security variables, resulting in a minimum of 1,152 orthogonal univariate tests.
+
+FDR Control (P-Hacking Mitigation): To mathematically suppress the Type I error (False Positive) inflation inherent to massive matrix testing, the pipeline enforces the Benjamini-Hochberg False Discovery Rate (FDR) procedure at a strict 5% threshold.
+
+Causal Isolation: Omitted Variable Bias (OVB) is controlled via Directed Acyclic Graphs (DAGs), isolating the pure structural effect of the HCL AST from external developer maturity biases.
+
+Null-Resource Handling: The system dynamically bypasses non-instantiated AWS resources in the AST, statistically excluding them from conditional probability denominators to prevent False Negative skewing.
+
+4. Ground Truth Matrix
+
+The regression model maps topological code structures to real-world infrastructure vulnerabilities:
+
+Framework
+
+Security Vector (Checkov IDs)
+
+Topological Causal Predictors (AST)
+
+CIS AWS Foundations
+
+Architecture & IAM (e.g., CKV_AWS_1, CKV_AWS_41)
+
+numLiteralExpression, avgMccabeCC, entropyOfStrings, maxDepthNestedBlocks
+
+PCI DSS v4.0
+
+Network & Transactional (e.g., CKV_AWS_25, CKV_AWS_277)
+
+numDynamicBlocks, numLoops, countOfBooleanFlags, numConditionalExpressions
+
+HIPAA & LGPD
+
+Privacy & Health Data (e.g., CKV_AWS_5, CKV_AWS_55)
+
+moduleNestingDepth, numCrossResourceReferences, avgDepthNestedBlocks
+
+5. Repository Structure
+
+.
 ├── data/
 │   ├── processed/         # SAST JSONL & AST regression matrices
 │   └── raw_hcl/           # Cloned AWS HCL repository corpus
@@ -18,5 +107,17 @@ Infrastructure & Determinism: Configured entirely via Nix flakes to guarantee ab
 ├── docker-compose.yml     # Deterministic OCI orchestration & Volume mapping
 ├── flake.nix              # Nix declarative environment & LSP injection
 └── justfile               # Pipeline command runner
-6. Execution ProtocolFor reviewers utilizing the pre-compiled OCI image, the pipeline execution is abstracted via declarative orchestration. DuckDB state persistence requires explicit volume mapping to the host filesystem.<kbd>Step 1</kbd> Load the immutable Nix-compiled OCI artifact:docker load < result
-<kbd>Step 2</kbd> Execute the ELT pipeline (the docker-compose.yml natively enforces host volume mapping for DuckDB state preservation):docker-compose up ast-pipeline
+
+
+6. Execution Protocol
+
+For reviewers utilizing the pre-compiled OCI image, the pipeline execution is abstracted via declarative orchestration.
+
+Step 1: Load the immutable Nix-compiled OCI artifact:
+
+docker load < result
+
+
+Step 2: Execute the ELT pipeline (the docker-compose.yml natively enforces host volume mapping for DuckDB state preservation):
+
+docker-compose up ast-pipeline
